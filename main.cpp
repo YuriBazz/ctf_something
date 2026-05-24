@@ -7,10 +7,7 @@
 #include<complex>
 #include <functional>
 #include <chrono>
-#include <cmath>
-#include <span>
 #include <iostream>
-#include <iterator>
 #include <limits>
 #include <list>
 #include <map>
@@ -52,44 +49,93 @@ template <class T>
 using omset = tree<pair<T, int>, null_type, less<pair<T, int>>, rb_tree_tag, tree_order_statistics_node_update>;
 inline constexpr bool MULTITEST = 0;
 
+inline constexpr char BASE = ' ';
+inline constexpr uint ALPH = 96;
+
+struct node {
+    array<node*, ALPH> next;
+    node *parent = nullptr;
+    node *suf;
+    uint p_char = 0;
+    bool terminal = false;
+
+    void add(string_view s) {
+        node *cur = this;
+        uint n = s.length();
+        for (uint i = 0; i < n; ++i) {
+            uint j = s[i] - BASE;
+            if (!cur->next[j]) cur->next[j] = new node();
+            node *next = cur->next[j];
+            next->parent = cur;
+            next->p_char = j;
+            cur = next;
+        }
+        cur->terminal = 1;
+    }
+
+    void init_suff() {
+        queue<node*> q;
+        q.emplace(this);
+        while (!q.empty()) {
+            node *v = q.front();
+            q.pop();
+            for (uint i = 0; i < ALPH; ++i) {
+                if (!v->next[i]) continue;
+                q.emplace(v->next[i]);
+            }
+            if (v == this) continue;
+            uint x = v->p_char;
+            node *p = v->parent->suf;
+            while (!p->next[x]) p = p->suf;
+            v->suf = p->next[x];
+            v->terminal |= v->suf->terminal;
+        }
+    }
+
+    void init_root() {
+        node *f = new node();
+        for (uint i = 0; i < ALPH; ++i) f->next[i] = this;
+        this->parent = f;
+        this->suf = f;
+        f->suf = f;
+    }
+
+    bool find(string_view s) {
+        node* cur = this;
+
+        uint n = s.length();
+        for (uint i = 0; i < n; ++i) {
+            if (cur->terminal) return 1;
+            uint j = s[i] - BASE;
+            auto temp = cur;
+            while (!temp->next[j]) temp = temp->suf;
+            cur = temp->next[j];
+        }
+        return cur->terminal;
+    }
+};
+
+
+
 
 void solve() {
-    string s;
-    cin >> s;
-    string rev = s;
-    reverse(all(rev));
-    swap(s, rev);
-    s += '$' + rev + '#';
-    uint n = s.length();
-    vt<uint> p(n), c(n); // TODO:  order, class of the equality
-    {
-        // TODO: k == 0
-        vt<pair<char, uint>> a(n);
-        for (uint i = 0; i < n; ++i) a[i] = {s[i], i};
-        sort(all(a));
-        for (uint i =0; i < n; ++i) p[i] = a[i].second;
-        c[p[0]] = 0;
-        for (uint i = 1; i < n; ++i) {
-                c[p[i]] = c[p[i-1]] + (a[i].first != a[i-1].first);
-        }
+    uint n;
+    string inp;
+    getline(cin, inp);
+    from_chars(inp.data(), inp.data() + inp.length(), n);
+    node *bor = new node();
+    bor->init_root();
+    string t;
+    for (uint i = 0; i < n; ++i) {
+        getline(cin, t);
+        bor->add(t);
     }
 
-    uint k = 0;
-    while (1u << k < n) {
-        // TODO: k -> k +1
-        vt<pair<pair<uint,uint>, uint>> a(n);
-        for (uint i = 0; i < n; ++i) a[i] = {{c[i], c[(i + (1 << k)) % n]}, i};
-        sort(all(a));
-        for (uint i =0; i < n; ++i) p[i] = a[i].second;
-        c[p[0]] = 0;
-        for (uint i = 1; i < n; ++i) {
-            c[p[i]] = c[p[i-1]] + (a[i].first != a[i-1].first);
-        }
-        k++;
+    bor->init_suff();
+    while (getline(cin, t)) {
+        if (t.empty()) continue;
+        if (n && bor->find(t)) cout << t << '\n';
     }
-
-    for (auto x : p) cout << x << ' ' << s.substr(x, n - x) << '\n';
-
 }
 
 
@@ -102,7 +148,7 @@ int main() {
     }
 #ifdef LOCAL
     for (uint _GENERIC_VARIABLE_NAME = 1; _GENERIC_VARIABLE_NAME <= TESTS_COUNT; ++_GENERIC_VARIABLE_NAME) {
-        cout << "=== Test #" << _GENERIC_VARIABLE_NAME << " ===" << '\n';
+        cout << "====== Test #" << _GENERIC_VARIABLE_NAME << " ======" << '\n';
         auto start = chrono::steady_clock::now();
         solve();
         auto end = chrono::steady_clock::now();

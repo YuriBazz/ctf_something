@@ -109,6 +109,7 @@ namespace implicit_treap {
     dfs(v->r);
   }
 }
+
 namespace treap {
   struct node {
     int x; // TODO: Key
@@ -178,6 +179,7 @@ namespace treap {
     return l;
   }
 }
+
 namespace bst_AVL {
   // TODO: Balanced BST -- In any case std::set<> should be used instead of this.
   // TODO: All other task, where you need AVL, you should use Treap
@@ -321,6 +323,7 @@ int find(node* v, int k) {
   return find(v->r, k - size(v->l) -1);
 }
 }
+
 namespace bst{
   // TODO: std::set<> is standard realisation of BST
   // TODO: But if there are need for special realisation, it could be smth like this
@@ -360,6 +363,7 @@ namespace bst{
   }
 
 }
+
 namespace  sparse_table{
   //TODO: [l,r];
   //TODO: Builder
@@ -384,6 +388,7 @@ int get(int l, int r) {
   return min(sp[ks[r-l+1]][l], sp[ks[r-l+1]][r - (1 << ks[r-l+1]) + 1]).second;
 }
 }
+
 namespace LCA{
   //TODO: Requires dfs with clock
   //TODO: Also it could require additional dfs to create parent[\cdot] for given tree
@@ -430,6 +435,7 @@ namespace LCA{
     }
   }
 }
+
 namespace segtree_top{
 
   //TODO: Простейший сег три на максимум
@@ -471,6 +477,7 @@ int get(int v, int l, int x, int lx, int rx) {
   return left == -2 ? get(v,l ,(x << 1) + 2, m, rx) : left;
 }
 }
+
 namespace segtree_down{
   vector<int> a;
   vector<pair<int,int>> t;
@@ -512,9 +519,11 @@ int get(int l, int r) {
   return mmax - mmin;
 }
 }
+
 namespace sqrt_optimization {
   //TODO : Kopelovich
 }
+
 namespace strings {
   namespace hashing {
     void build(int x, int n) {
@@ -632,6 +641,7 @@ namespace strings {
     }
   }
 }
+
 namespace graphs {
   //TODO: FB -- достаточно смешной алгоритм описываемый
   /*
@@ -864,5 +874,142 @@ namespace flows {
       }
     }
   }
+}
+
+namespace suff_array {
+namespace simple {
+     string s;
+     cin >> s;
+     s += '$';
+     uint n = s.length();
+     vt<uint> p(n), c(n); // TODO:  order, class of the equality
+     {
+         // TODO: k == 0
+         vt<pair<char, uint>> a(n);
+         for (uint i = 0; i < n; ++i) a[i] = {s[i], i};
+         sort(all(a));
+         for (uint i =0; i < n; ++i) p[i] = a[i].second;
+         c[p[0]] = 0;
+         for (uint i = 1; i < n; ++i) {
+             c[p[i]] = c[p[i-1]] + (a[i].first != a[i-1].first);
+         }
+     }
+
+     uint k = 0;
+     while (1u << k < n) {
+         // TODO: k -> k +1
+         vt<pair<pair<uint,uint>, uint>> a(n);
+         for (uint i = 0; i < n; ++i) a[i] = {{c[i], c[(i + (1 << k)) % n]}, i};
+         sort(all(a));
+         for (uint i =0; i < n; ++i) p[i] = a[i].second;
+         c[p[0]] = 0;
+         for (uint i = 1; i < n; ++i) {
+             c[p[i]] = c[p[i-1]] + (a[i].first != a[i-1].first);
+         }
+         k++;
+     }
+ }
+
+namespace normal {
+    s += '\31';
+    uint n = s.length();
+    vt<uint> p(n), c(n); // TODO:  order, class of the equality
+    //TODO: k == 0
+    for (uint i = 0; i < n; ++i) p[i] = i; // TODO: Initial order
+    sort(all(p), [&](uint i, uint j) {
+        return s[i] < s[j];
+    });  // TODO: Initial p sorting
+    uint cc = 0; // TODO: Class counter
+    for (uint i = 0; i < n ; ++i) cc += (i && s[p[i]] != s[p[i-1]]), c[p[i]] = cc; // TODO: Count classes and set class for every pos
+
+    vt<uint> pos(n + 1);
+    uint k = 0; // TODO: Действительно 0, т.к. по нему строится c2 для k == 1
+    while (1u << k < n) {
+        fill(all(pos), 0);
+        vt<uint> p2(n), c2(n);
+        for (uint i = 0; i < n; ++i) pos[c[i] + 1]++; // TODO: Для каждого c[i] < n насчитываем их кол-во
+        for (uint i = 1; i < n; ++i) pos[i] += pos[i-1]; // TODO: Теперь, pos хранит для каждого класса позицию его страта.
+
+        for (uint i = 0; i < n; ++i) {
+            uint j = (n + p[i] - (1u << k)) % n; // TODO: Позиция начала первой половины текущего суффикса (т.е. всего суффикса s[p[i]]...$....s[j]...s[p[i]]...)
+            //TODO: Но эти же первые половины уже имеют какие-то свои классы эквивалентности, т.к. их длина тоже 1 << k
+            p2[pos[c[j]]++] = j; //TODO: Поставили строку s[j, j + 1 << k] на свою позицию
+        }
+        uint cc = 0;
+        for (uint i = 0; i < n; ++i) cc += (i && pair{c[p2[i]], c[(p2[i] + (1u << k)) % n]} != pair{c[p2[i -1]], c[(p2[i - 1] + (1u << k)) % n]}), c2[p2[i]] = cc;
+        c = move(c2);
+        p = move(p2);
+        k++;
+    }
+    }
+
+namespace karas {
+    //TODO: Оказывается, Ахо-корасик не сильно страшный
+
+    inline constexpr char BASE = ' ';
+    inline constexpr uint ALPH = 96;
+
+    struct node {
+        array<node*, ALPH> next;
+        node *parent = nullptr;
+        node *suf;
+        uint p_char = 0;
+        bool terminal = false;
+
+        void add(string_view s) {
+            node *cur = this;
+            uint n = s.length();
+            for (uint i = 0; i < n; ++i) {
+                uint j = s[i] - BASE;
+                if (!cur->next[j]) cur->next[j] = new node();
+                node *next = cur->next[j];
+                next->parent = cur;
+                next->p_char = j;
+                cur = next;
+            }
+            cur->terminal = 1;
+        }
+
+        void init_suff() {
+            queue<node*> q;
+            q.emplace(this);
+            while (!q.empty()) {
+                node *v = q.front();
+                q.pop();
+                for (uint i = 0; i < ALPH; ++i) {
+                    if (!v->next[i]) continue;
+                    q.emplace(v->next[i]);
+                }
+                if (v == this) continue;
+                uint x = v->p_char;
+                node *p = v->parent->suf;
+                while (!p->next[x]) p = p->suf;
+                v->suf = p->next[x];
+                v->terminal |= v->suf->terminal;
+            }
+        }
+
+        void init_root() {
+            node *f = new node();
+            for (uint i = 0; i < ALPH; ++i) f->next[i] = this;
+            this->parent = f;
+            this->suf = f;
+            f->suf = f;
+        }
+
+        bool find(string_view s) {
+            node* cur = this;
+
+            uint n = s.length();
+            for (uint i = 0; i < n; ++i) {
+                if (cur->terminal) return 1;
+                uint j = s[i] - BASE;
+                auto temp = cur;
+                while (!temp->next[j]) temp = temp->suf;
+                cur = temp->next[j];
+            }
+            return cur->terminal;
+        }
+    };
 }
 }

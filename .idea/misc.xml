@@ -21,4 +21,5 @@
     </option>
   </component>
   <component name="MakefileWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="GHC 9.14.1" project-jdk-type="HaskellSdk" />
 </project>

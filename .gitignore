@@ -114,4 +114,5 @@ fabric.properties
 
 .env
 
+.idea/
 .clang-format
