@@ -4,7 +4,7 @@ import GHC.Base
 main :: IO ()
 main = do
     n <- read <$> getLine
-    putStrLn(show $ god $ square $ add1  n)
+    putStrLn(show $ square $ add1  n)
     
 square = flip (^) 2
 add1 = (+) 1
