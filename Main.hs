@@ -1,11 +1,8 @@
 module Main where
-import GHC.Base 
+import Control.Monad (replicateM, forM, replicateM_)
+
 
 main :: IO ()
 main = do
-    n <- read <$> getLine
-    putStrLn(show $ square $ add1  n)
-    
-square = flip (^) 2
-add1 = (+) 1
-got x = x == 5
+    n::Integer <- read <$> getLine
+    putStrLn $ show n

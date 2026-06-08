@@ -1,6 +1,8 @@
 #ifdef LOCAL
 #define _GLIBCXX_DEBUG
 #endif
+#define INCLUDES_ 
+#ifdef INCLUDES_
 #include <algorithm>
 #include <bitset>
 #include <deque>
@@ -32,25 +34,49 @@
 #define umap unordered_map
 #define sizet size_t
 #define i128 __int128_t
-#define vi vector<int>
-#define vl vector<long>
-#define vd vector<double>
 #define vt vector
 #define pb push_back
 #define eb emplace_back
 #define pii pair<int,int>
 #define all(x) (x).begin(),(x).end()
-
 using namespace std;
 using namespace __gnu_pbds;
 template <class T>
 using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 template <class T>
 using omset = tree<pair<T, int>, null_type, less<pair<T, int>>, rb_tree_tag, tree_order_statistics_node_update>;
-inline constexpr bool MULTITEST = 0;
+#endif
+inline constexpr bool MULTITEST = 1;
+
+uint n;
+
+struct seg {
+    int x;
+    int y;
+    bool dead()
+};
+
+struct cmp {
+    bool operator()(pair<int,int> p1, pair<int,int> p2) {
+
+    }
+};
 
 void solve() {
+    uint m;
+    cin >> n >> m;
+    vt<bool> a(n, 1);
+    for (uint i = 0; i < m; ++i) {
+        uint x;
+        cin >> x;
+        a[x-1] = 0;
+    }
+
+    priority_queue<pair<int,int>, vt<pair<int,int>>, >
+
+
 }
+
 
 
 int main() {
@@ -75,6 +101,5 @@ int main() {
         cout << '\n';
     }
 #endif
-
     return 0;
 }

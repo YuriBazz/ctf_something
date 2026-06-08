@@ -45,7 +45,7 @@ template <typename T> using omset = tree<pair<T, int>, null_type, less<pair<T, i
 void solve() {
     string s1 = "", s2;
     cin >> s2;
-    cout << (s1 < s2);
+    cout << (s1 < s2); 
 }
 
 

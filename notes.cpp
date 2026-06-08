@@ -325,9 +325,9 @@ int find(node* v, int k) {
 }
 
 namespace bst{
-  // TODO: std::set<> is standard realisation of BST
-  // TODO: But if there are need for special realisation, it could be smth like this
-  // TODO: You should never use your own implementation instead of std::set<>
+  //TODO: std::set<> is standard realisation of BST
+  //TODO: But if there are need for special realisation, it could be smth like this
+  //TODO: You should never use your own implementation instead of std::set<>
 
   struct node {
     int x;
@@ -722,7 +722,7 @@ namespace math {
     if (n > 1) phi = phi / n * (n - 1);
     cout << phi  << '\n';
   }
-  //TODO:: Vector field's basis (Primitive Gauss)
+  //TODO: Vector field's basis (Primitive Gauss)
   {
     uint n;
 
@@ -847,7 +847,12 @@ namespace flows {
       head[b] = edges.size() -1;
     }
 
-    bool dfs(int v) {
+      /*
+       * TODO: Почему-то не написал, возможно когда-нибудь.
+       * TODO: Ясно, что проталкивать можно >1 величины потока.
+       * TODO: Самое приятное -- проталкивать степени двойки на уменьшение
+       */
+      bool dfs(int v) {
       u[v] = 1;
       for (int i = head[v]; i != -1; i = edges[i].next) {
         auto &e = edges[i];
@@ -858,6 +863,17 @@ namespace flows {
       }
       return 0;
     }
+
+      //TODO: Примерно так проталкивать
+      val = 1 << 30;
+      while (val != 0) {
+          while (dfs(s,val)) {
+              flow += val;
+              fill(all(u), 0); //TODO: u -- used[\cdot]
+          }
+          fill(all(u), 0);
+          val >>= 1;
+      }
 
     void print() {
       int v = 0;

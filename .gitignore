@@ -116,3 +116,6 @@ fabric.properties
 
 .idea/
 .clang-format
+.vscode
+build/
+.git/
