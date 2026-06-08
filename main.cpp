@@ -48,33 +48,34 @@ using omset = tree<pair<T, int>, null_type, less<pair<T, int>>, rb_tree_tag, tre
 #endif
 inline constexpr bool MULTITEST = 1;
 
-uint n;
-
-struct seg {
-    int x;
-    int y;
-    bool dead()
-};
-
-struct cmp {
-    bool operator()(pair<int,int> p1, pair<int,int> p2) {
-
-    }
-};
+uint len(pair<uint,uint> p, uint n) {
+    if (p.first < p.second) return p.second - p.first - 1;
+    return n + p.second - p.first - 1; // n - (p.first - p.second + 1)
+}
 
 void solve() {
-    uint m;
+    uint n,m;
     cin >> n >> m;
-    vt<bool> a(n, 1);
-    for (uint i = 0; i < m; ++i) {
-        uint x;
-        cin >> x;
-        a[x-1] = 0;
+    vt<uint> a(m);
+    for (uint i = 0; i < m; ++i) cin >> a[i];
+    sort(all(a));
+    vt<pair<uint,uint>> segs;
+    segs.reserve(m);
+    for (uint i = 0; i < m; ++i) segs.eb(a[i % m], a[(i + 1) % m]);
+    sort(all(segs), [&](auto p1, auto p2) {
+        return len(p1, n) > len(p2, n);
+    });
+
+    int k = 0;
+    int count = n;
+    for (auto &seg : segs) {
+        int l = (int)len(seg, n) - 2 * k;
+        if (l <= 0) continue;
+        count -= l;
+        count += l == 1 ? 0 : 1;
+        k += 2;
     }
-
-    priority_queue<pair<int,int>, vt<pair<int,int>>, >
-
-
+    cout << count;
 }
 
 
