@@ -41,7 +41,7 @@ namespace implicit_treap {
 
   // TODO: Push all that hasn't &
 
-  //TODO: t = l <- r ПРЕДПОЛАГАЕТСЯ, ЧТО КЛЮЧИ СПРАВА БОЛЬШЕ КЛЮЧЕЙ СЛЕВА
+  //TODO: t = l <- r ПРЕДПОЛАГАЕТСЯ, ЧТО КЛЮЧИ (IMPLICIT KEYS -- ПОРЯДОЧЕК БЛЯТЬ) СПРАВА БОЛЬШЕ КЛЮЧЕЙ СЛЕВА
   void merge (node* & t, node* l, node* r) {
     if (!l || !r)
       t = l ? l : r;
@@ -52,7 +52,7 @@ namespace implicit_treap {
     upd(t);
   }
 
-  //TODO: [0, i-1] [i,n]
+  //TODO: [0, i) [i,n)
   void split (node* t, node* & l, node* & r, int i) {
     if (!t) {
       r = nullptr;
@@ -663,6 +663,7 @@ namespace graphs {
     return 0;
   }
 
+    // TODO: Собственно, Кун
   void kun() {
     pp = vi(n, -1);
     u = vt<char>(2 * n + 2, false);
@@ -688,6 +689,19 @@ namespace graphs {
 }
 
 namespace math {
+  //TODO: Расиширеный Евклид
+  {
+    // x a + y b = gcd(a,b)
+    int gcd(int a, int b, int &x, int &y) {
+      if (b == 0) {
+        x = 1, y = 0;
+        return b;
+      }
+      int x1, y1, g = gcd(b, a % b, x1, y1);
+      x = y1, y = x1 - a / b * y1;
+      return g;
+    } 
+  }
   //TODO: Eratoshen
   {
     constexpr uint N = 1.5e6;
@@ -1042,4 +1056,20 @@ namespace karas {
         }
     };
 }
+}
+
+namespace dsu {
+    // TODO : Idiomatic version with pathes evr
+    vector<int> dsu;
+    int find(int x){
+        if(dsu[x] != x) {
+            dsu[x] = find(dsu[x]);
+        }
+        return dsu[x];
+    }
+    void join(int x, int y){
+        x = find(x);
+        y = find(y);
+        dsu[y] = x;
+    }
 }
